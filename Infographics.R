@@ -1,1 +1,264 @@
-#Infographics
+##############################
+#       INFOGRAPHICS v.01    #
+##############################
+
+#libraries to consider
+# library(waffle)
+# library(extrafont)
+# library(Cairo)
+# library(ggfittext)
+# library(crayon)
+
+##############################
+#       LIBRARIES            #
+##############################
+
+library(useful) 
+library(grid)   
+library(magick)
+library(ggplot2)
+library(cowplot)
+library(stringr)
+
+##############################
+#       COLOURS              #
+##############################
+
+infographics_colour <- "#000080"
+infographics_colour2 <- "#008080"
+background_colour <- "#efe3af"
+
+# Background     efe3af
+# MSSA teal      008080
+# ECO blue       000080
+# PSEY yellow    FFD700	
+# kleb green     228B22
+# MRSA red       800000
+# CDIF orange    D2691E 
+
+##############################
+#        FIGURES             #
+##############################
+
+#top
+#top left
+
+##############################
+#       EXTERNAL FILES       #
+##############################
+
+logo_location <- "logo.jpg"
+left_squarecircle <- "left square circle.jpg"
+right_squarecircle <- "right square circle.jpg"
+left_rectcircle <- "left rect cricle.jpg"
+right_rectcircle <- "right rect cricle.jpg"
+house <- "home.png"
+hospital <- "hospital.png"
+elder_man <- "elder_m.jpg"
+elder_woman <- "elder_w.png"
+adult_man <- "adult_m.png"
+adult_woman <- "adult_w.png"
+
+##############################
+#   FIXED ELEMENTS           #
+##############################
+
+#EMPTY PLOT 
+empty_plot <- data.frame()
+
+#BACKGROUND ELEMENTS
+create_element <- function (image_file, output) {
+  r_object <- image_read(image_file)
+  r_object <- ggplot(empty_plot) + draw_image(r_object)
+  assign(output, r_object, env = .GlobalEnv)
+}
+
+create_house <- function (image_file, output) {
+  r_object <- image_read(image_file)
+  r_object <- image_fill(r_object, infographics_colour, point = "+500+500", fuzz = 90)
+  r_object <- ggplot(empty_plot) + draw_image(r_object)
+  assign(output, r_object, env = .GlobalEnv)
+}
+
+create_hospital <- function (image_file, output) {
+  r_object <- image_read(image_file)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+60+250", fuzz = 90)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+230+450", fuzz = 90)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+410+450", fuzz = 90)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+580+450", fuzz = 90)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+750+450", fuzz = 90)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+230+590", fuzz = 90)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+410+590", fuzz = 90)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+580+590", fuzz = 90)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+750+590", fuzz = 90)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+230+720", fuzz = 90)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+750+720", fuzz = 90)
+  r_object <- ggplot(empty_plot) + draw_image(r_object)
+  assign(output, r_object, env = .GlobalEnv)
+}
+
+create_adultm <- function (image_file, output) {
+  r_object <- image_read(image_file)
+  r_object <- image_fill(r_object, background_colour, point = "+4+2", fuzz = 0)
+  r_object <- image_fill(r_object, infographics_colour, point = "+40+20", fuzz = 50)
+  r_object <- image_fill(r_object, infographics_colour, point = "+50+85", fuzz = 50)
+  r_object <- ggplot(empty_plot) + draw_image(r_object)
+  assign(output, r_object, env = .GlobalEnv)
+}
+
+create_adultw <- function (image_file, output) {
+  r_object <- image_read(image_file)
+  r_object <- image_fill(r_object, background_colour, point = "+10+10", fuzz = 0)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+60+20", fuzz = 50)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+60+100", fuzz = 50)
+  r_object <- ggplot(empty_plot) + draw_image(r_object)
+  assign(output, r_object, env = .GlobalEnv)
+}
+
+create_elderm <- function (image_file, output) {
+  r_object <- image_read(image_file)
+  r_object <- image_fill(r_object, background_colour, point = "+14+14", fuzz = 10)
+  r_object <- image_fill(r_object, infographics_colour, point = "+100+25", fuzz = 50)
+  r_object <- image_fill(r_object, infographics_colour, point = "+100+100", fuzz = 50)
+  r_object <- ggplot(empty_plot) + draw_image(r_object)
+  assign(output, r_object, env = .GlobalEnv)
+}
+
+create_elderw <- function (image_file, output) {
+  r_object <- image_read(image_file)
+  r_object <- image_fill(r_object, background_colour, point = "+14+14", fuzz = 10)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+250+250", fuzz = 50)
+  r_object <- image_fill(r_object, infographics_colour2, point = "+250+50", fuzz = 50)
+  r_object <- ggplot(empty_plot) + draw_image(r_object)
+  assign(output, r_object, env = .GlobalEnv)
+}
+
+create_element(logo_location, "insert_logo")
+create_element(left_squarecircle, "insert_left_squarecircle")
+create_element(right_squarecircle, "insert_right_squarecircle")
+create_element(left_rectcircle, "insert_left_rectcircle")
+create_element(right_rectcircle, "insert_right_rectcircle")
+
+create_adultm(adult_man, "insert_am")
+create_adultw(adult_woman, "insert_aw")
+create_elderm(elder_man, "insert_em")
+create_elderw(elder_woman, "insert_ew")
+
+create_house(house, "insert_house")
+create_hospital(hospital, "insert_hospital")
+
+##############################
+#   INPUT INFORMATION        #
+##############################
+
+#title
+title_name1 <- "E.coli"
+title_name2 <- "Bacteraemia"
+title_place <- "England"
+title_year <- "2017/2018"
+
+#top
+rate_number <- "22"
+
+#middle
+rhigh_factor <- "elderly"
+rhigh_age <- paste0("(age ", "\U2265", "85)")
+rlow_factor <- "adult"
+rhigh_age <- "(age 45-64)"
+
+low_male <- insert_am
+low_female <- insert_aw
+high_male <- insert_em
+high_female <- insert_ew
+
+#bottom left
+common_source <- "Skin and soft tissue"
+this_year <- substr(as.character(Sys.Date()), 1, 4)
+crown_copyright <- paste0("\U00A9 Crown copyright ", this_year)
+
+#bottom right
+most_cases <- "community-onset"
+
+################################
+################################
+##                            ##
+##        CREATE PDF          ##
+##                            ##
+################################
+################################
+
+create_infographics <- function() {
+
+#PDF SETUP
+grDevices::pdf("Info.pdf", onefile = T, width = 8, height = 11)
+grid::grid.newpage()
+grid::pushViewport(grid::viewport(layout = grid::grid.layout(nrow = 110, ncol = 80, widths = unit(0.1, "inches"), heights = unit(0.1, "inches"))))
+par(col = "blue")
+
+#ELEMENTS (FIXED)
+#logo
+print(insert_logo, vp = useful::vplayout(x = 1:20, y = 1:25))
+
+#background
+print(insert_left_squarecircle, vp = vplayout(x = 70:110, y = 1:44))
+print(insert_right_squarecircle, vp = vplayout(x = 70:110, y = 37:80))
+print(insert_left_rectcircle, vp = vplayout(x = 15:54, y = 1:80))
+print(insert_right_rectcircle, vp = vplayout(x = 40:79, y = 1:80))
+
+#top
+grid::grid.text("Overall rate", just = "left", y = unit(0.78, "npc"), x = unit(0.1, "npc"), gp = gpar(col = infographics_colour, fontsize = 22, fontface = "bold"))
+grid::grid.text("people out of every", just = "left", y = unit(0.75, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+grid::grid.text("100,000", just = "left", y = unit(0.73, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour2, fontsize = 22))
+grid::grid.text("will acquire an", just = "left", y = unit(0.71, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+
+#middle
+grid::grid.text("Risk greater among ", just = "left", y = unit(0.55, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 28, fontface = "bold"))
+
+print(low_male, vp = vplayout(x = 55:65, y = 5:15))
+print(low_female, vp = vplayout(x = 55:65, y = 20:30))
+print(high_male, vp = vplayout(x = 55:65, y = 38:48))
+print(high_female, vp = vplayout(x = 55:65, y = 55:65))
+
+#bottom left
+grid::grid.text("infections are the most common source", just = "left", y = unit(0.27, "npc"), x = unit(0.07, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+
+#bottom right
+grid::grid.text("Most cases are", just = "left", y = unit(0.3, "npc"), x = unit(0.7, "npc"), gp = gpar(col = infographics_colour, fontsize = 18))
+
+grid::grid.text("For full report, please see", just = "left", y = unit(0.05, "npc"), x = unit(0.52, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
+grid::grid.text("https://www.gov.uk/government/statistics/mrsa-mssa-and-e-coli-bacteraemia-and-c-difficile-infection-", just = "left", y = unit(0.04, "npc"), x = unit(0.52, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
+grid::grid.text("annual-epidemiological-commentary", just = "left", y = unit(0.03, "npc"), x = unit(0.52, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
+
+#ELEMENTS(VARIABLE)
+#title
+grid::grid.text(title_name1, y = unit(0.95, "npc"), x = unit(0.5, "npc"), gp = gpar(col = infographics_colour, fontsize = 36, fontface = "italic"))
+grid::grid.text(title_name2, y = unit(0.95, "npc"), x = unit(0.8, "npc"), gp = gpar(col = infographics_colour, fontsize = 36))
+grid::grid.text(title_place, y = unit(0.9, "npc"), x = unit(0.5, "npc"), gp = gpar(col = infographics_colour, fontsize = 36))
+grid::grid.text(title_year, y = unit(0.9, "npc"), x = unit(0.8, "npc"), gp = gpar(col = infographics_colour, fontsize = 36))
+
+#top
+grid::grid.text(rate_number, just = "left", y = unit(0.73, "npc"), x = unit(0.1, "npc"), gp = gpar(col = infographics_colour2, fontsize = 48, fontface = "bold"))
+grid::grid.text(paste(title_name1, title_name2), just = "left", y = unit(0.69, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+
+#middle
+grid::grid.text(rhigh_factor, just = "left", y = unit(0.55, "npc"), x = unit(0.66, "npc"), gp = gpar(col = infographics_colour, fontsize = 32, fontface = "bold"))
+
+grid::grid.text(paste(str_to_title(rlow_factor), "male rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.12, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+grid::grid.text(paste(str_to_title(rlow_factor), "female rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.3, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
+grid::grid.text(paste(str_to_title(rhigh_factor), "male rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.5, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+grid::grid.text(paste(str_to_title(rhigh_factor), "female rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.7, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
+
+
+
+#bottom left
+grid::grid.text(common_source, just = "left", y = unit(0.3, "npc"), x = unit(0.07, "npc"), gp = gpar(col = infographics_colour, fontsize = 22))
+grid::grid.text(crown_copyright, just = "left", y = unit(0.03, "npc"), x = unit(0.07, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
+
+#bottom right
+grid::grid.text(most_cases, just = "left", y = unit(0.27, "npc"), x = unit(0.58, "npc"), gp = gpar(col = infographics_colour, fontsize = 22, fontface = "bold"))
+print(insert_house, vp = vplayout(x = 85:100, y = 45:60))
+print(insert_hospital, vp = vplayout(x = 85:100, y = 60:75))
+
+#CREATE PDF AND CLOSE DEVICE
+grDevices::dev.off()
+}
