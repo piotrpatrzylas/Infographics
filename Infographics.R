@@ -5,8 +5,8 @@
 #   INPUT INFORMATION        #
 ##############################
 
-# Title
-info_type <- 2
+# Title - enter number from the list below
+info_type <- 6
 # 1 - C. difficile infection
 # 2 - E. coli bacteraemia
 # 3 - Klebsiella spp. bacteraemia
@@ -15,11 +15,11 @@ info_type <- 2
 # 6 - Pseudomonas Aeruginosa Bacteraemia
 
 # Overall rate (top)
-rate_number <- 33
-plot_data   <- data.frame(years = c("2011/12", "2012/13", "2013/14", "2014/15"),
-                        rate = c(15, 15.5, 15.7, 20))
+rate_number <- 15 #must be integer value
+plot_data   <- data.frame(years = c("2011/12", "2012/13", "2013/14", "2014/15", "2015/16", "2017/19", "2019/20", "2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26", "2026/27", "2027/28"),
+                        rate = c(15, 15.5, 15.7, 20, 33, 15, 15.5, 15.7, 20, 33, 15, 24, 24, 65, 31))
 
-# Risk greater among (middle)
+# Risk greater among (middle) - enter pair of numbers from the list below
 rhigh_factor  <- 7
 rlow_factor   <- 4
 # 1 - infants         (age < 1)
@@ -30,20 +30,19 @@ rlow_factor   <- 4
 # 6 - senior adults   (age 75 - 84)
 # 7 - elderly         (>= 85)
 
-rhigh_malenumber  <- 185
-rhigh_femnumber   <- 88
-rlow_malenumber   <- 29
-rlow_femnumber    <- 13
+rhigh_malenumber  <- 185  #must be numeric
+rhigh_femnumber   <- 88   #must be numeric
+rlow_malenumber   <- 29   #must be numeric
+rlow_femnumber    <- 13   #must be numeric
 
-#Most common source of infection (bottom left)
-doughnut_data     <- data.frame(count = 
-                                   c(28,41,15,13,4), 
-                                 source = c("Other", "Skin and soft tissue", "Catheters \n and lines", "Pneumonia", "Unknown"))
+#Most common source of infection (bottom left) - may require formatting with \n for new line
+doughnut_data     <- data.frame(
+  count = c(22, 23, 14, 6, 25, 10),
+  source = c("Unknown", "Other\nsources", "Respiratory\ntract", "Gastrointestinal", "Hepatibiliary", "UTI"))
 
 #Most cases (bottom right)
-most_cases <- "community-onset"
-community_percent <- 65
-hospital_percent <- 35
+community_percent <- 66   #must be numeric
+hospital_percent <- 33    #must be numeric
 
 # Change manually location / year in the title:
 location_manually <- NULL
@@ -127,66 +126,91 @@ if (is.null(year_manually)) {
 #middle
 switch(rhigh_factor, 
        "infant" = {
-         rhigh_factor <- "infants"
+         rhigh_factor   <- "infants"
+         rhigh_factor2  <- "infant"
          rhigh_age <- paste("(age < 1)")
        },
        "youth" = {
-         rhigh_factor <- "youth"
+         rhigh_factor   <- "youth"
+         rhigh_factor2  <- "youth"
          rhigh_age <- paste("(age 1 - 14)")
        },
        "young_adult" = {
-         rhigh_factor <- "adult"
+         rhigh_factor   <- "adults"
+         rhigh_factor2  <- "adult"
          rhigh_age <- paste("(age 15 - 44)")
        },
        "adult" = {
-         rhigh_factor <- "adult"
+         rhigh_factor   <- "adults"
+         rhigh_factor2  <- "adult"
          rhigh_age <- paste("(age 45 - 64)")
        },
        "older_adult" = {
-         rhigh_factor <- "adult"
+         rhigh_factor   <- "adults"
+         rhigh_factor2  <- "adult"
          rhigh_age <- paste("(age 65 - 74)")
        },
        "senior_adult" = {
-         rhigh_factor <- "adult"
+         rhigh_factor   <- "adults"
+         rhigh_factor2  <- "adult"
          rhigh_age <- paste("(age 75 - 84)")
        },
        "elder" = {
-         rhigh_factor <- "elderly"
+         rhigh_factor   <- "elderly"
+         rhigh_factor2  <- "elderly" 
          rhigh_age <- paste("(age \U2265 85)")
        })
 
 switch(rlow_factor, 
        "infant" = {
-         rlow_factor <- "infant"
+         rlow_factor  <- "infants"
+         rlow_factor2 <- "infant"
          rlow_age <- paste("(age < 1)")
        },
        "youth" = {
-         rlow_factor <- "youth"
+         rlow_factor  <- "youth"
+         rlow_factor2 <- "youth"
          rlow_age <- paste("(age 1 - 14)")
        },
        "young_adult" = {
-         rlow_factor <- "adult"
+         rlow_factor  <- "adults"
+         rlow_factor2 <- "adult"
          rlow_age <- paste("(age 15 - 44)")
        },
        "adult" = {
-         rlow_factor <- "adult"
+         rlow_factor  <- "adults"
+         rlow_factor2 <- "adult"
          rlow_age <- paste("(age 45 - 64)")
        },
        "older_adult" = {
-         rlow_factor <- "adult"
+         rlow_factor  <- "adults"
+         rlow_factor2 <- "adult"
          rlow_age <- paste("(age 65 - 74)")
        },
        "senior_adult" = {
-         rlow_factor <- "adult"
+         rlow_factor  <- "adults"
+         rlow_factor2 <- "adult"
          rlow_age <- paste("(age 75 - 84)")
        },
        "elder" = {
-         rlow_factor <- "elderly"
+         rlow_factor  <- "elderly"
+         rlow_factor2 <- "elderly"
          rlow_age <- paste("(age \U2265 85)")
        })
 
 #bottom left
-common_source <- as.character(doughnut_data[which.max(doughnut_data$count), 2])
+common_filter <- c("Unknown", "Other")
+common_data <- subset(doughnut_data, !source %in% common_filter)
+common_source <- str_replace(as.character(common_data[which.max(common_data$count), 2]), pattern = "\n", replacement = " ")
+
+#bottom right
+if (community_percent < hospital_percent) {
+  most_cases <- "hospital-onset"
+} else if (hospital_percent < community_percent) {
+  most_cases <- "community-onset"
+} else if (hospital_percent == community_percent) {
+  most_cases <- NULL
+}
 
 #colours
 background_colour     <- "#efe3af"
@@ -363,17 +387,16 @@ crown_copyright <- paste0("\U00A9 Crown copyright ", this_year)
 #top
 top_plot <- ggplot(plot_data, aes(x = years, y = rate, group = 1)) +
   geom_line(size = 2, colour = infographics_colour) + 
-  ylim(0,20) + 
+  ylim(0,max(plot_data$rate)) + 
   xlab("Financial Year") + ylab("Rate, per \n1000,000 population") +
   ggtitle(paste("Trends in rates of ", plot_name)) +
   theme(axis.title = element_text(color = infographics_colour)) +
   theme(plot.title = element_text(color = infographics_colour, face = "bold", size = 12 )) +
-  theme(axis.line = element_line(color = infographics_colour)) +
   theme (axis.text = element_text(color = infographics_colour)) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
   theme(panel.grid.major.y = element_line(color = infographics_colour)) +
   theme(plot.margin = unit(c(0,0,0,0), "cm"))  +
-  theme(plot.background =  element_rect(fill = background_colour))
+  theme(plot.background =  element_rect(fill = background_colour)) 
 
 ggsave(filename = "top.png", plot = top_plot, device = "png", path = getwd(), width = 5, height = 3)
 create_element("top.png", "insert_plot")
@@ -389,12 +412,12 @@ waffle_plot <- eval(parse(text = paste("plot_grid(",
 
 #bottom left
 doughnut_plot <-
-  ggplot(doughnut_data, aes(x = 3, y = doughnut_data$count)) +
-  geom_bar(width = 1, stat = "identity", color = background_colour, fill = doughnut_palette) +
+  ggplot(doughnut_data, aes(x = 2.5, y = doughnut_data$count)) +
+  geom_bar(width = 0.7, stat = "identity", color = background_colour, fill = doughnut_palette) +
   coord_polar(theta = 'y', start = 0) +
   scale_y_continuous(breaks=cumsum(doughnut_data$count) - doughnut_data$count / 2) +
-  geom_text(aes(x = 3, label = paste0(count, "%")), size = 4, color = "white", position = position_stack(vjust = 0.5)) +
-  geom_text(aes( x = 4.4, label = source), size = 4, color = infographics_colour, position = position_stack(vjust = 0.5)) +
+  geom_text(aes(x = 2.5, label = paste0(count, "%")), size = 2.5, color = "white", position = position_stack(vjust = 0.6)) +
+  geom_text(aes( x = 4, label = source), size = 3, color = infographics_colour, position = position_stack(vjust = 0.5)) +
   xlim(0.8, 4.5) + 
   theme_void() +
   theme(legend.position = "none")
@@ -493,65 +516,73 @@ print(insert_plot, vp = useful::vplayout(x = 25:46, y = 35:70))
 #middle 
 grid::grid.text(paste("Risk greater among", rhigh_factor), just = "left", y = unit(0.55, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 28, fontface = "bold"))
 
-grid::grid.text(paste(str_to_title(rlow_factor), "male rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.12, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
-if (rlow_factor == "infants") {
+grid::grid.text(paste(str_to_title(rlow_factor2), "male rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.12, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+if (rlow_factor2 == "infant") {
   print(insert_baby1, vp = vplayout(x = 58:68, y = 5:15))
-} else if (rlow_factor %in% c("youth", "adult")) {
+} else if (rlow_factor2 == "youth") {
+  print(insert_am, vp = vplayout(x = 60:68, y = 5:15))
+} else if (rlow_factor2 == "adult") {
   print(insert_am, vp = vplayout(x = 58:68, y = 5:15))
-} else if (rlow_factor == "elderly") {
+} else if (rlow_factor2 == "elderly") {
   print(insert_em, vp = vplayout(x = 58:68, y = 5:15))
 }
 
 grid::grid.text(rlow_malenumber, just = "left", y = unit(0.48, "npc"), x = unit(0.15, "npc"), gp = gpar(col = infographics_colour, fontsize = 36, fontface = "bold"))
-grid::grid.text(paste(rlow_factor, "male"), just = "left", y = unit(0.45, "npc"), x = unit(0.15, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+grid::grid.text(paste(rlow_factor2, "male"), just = "left", y = unit(0.45, "npc"), x = unit(0.15, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
 grid::grid.text("out of every", just = "left", y = unit(0.43, "npc"), x = unit(0.15, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
 grid::grid.text("100,000", just = "left", y = unit(0.41, "npc"), x = unit(0.15, "npc"), gp = gpar(col = infographics_colour, fontsize = 20))
 grid::grid.text(rlow_age, just = "left", y = unit(0.39, "npc"), x = unit(0.15, "npc"), gp = gpar(col = infographics_colour, fontsize = 8))
 
-grid::grid.text(paste(str_to_title(rlow_factor), "female rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.3, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
+grid::grid.text(paste(str_to_title(rlow_factor2), "female rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.33, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
 
-if (rlow_factor == "infants") {
-  print(insert_baby2, vp = vplayout(x = 58:68, y = 20:30))
-} else if (rlow_factor %in% c("youth", "adult")) {
-  print(insert_aw, vp = vplayout(x = 58:68, y = 20:30))
-} else if (rlow_factor == "elderly") {
-  print(insert_ew, vp = vplayout(x = 58:68, y = 20:30))
+if (rlow_factor2 == "infant") {
+  print(insert_baby2, vp = vplayout(x = 58:68, y = 23:33))
+} else if (rlow_factor2 == "youth") {
+  print(insert_aw, vp = vplayout(x = 60:68, y = 23:33))
+} else if (rlow_factor2 == "adult") {
+  print(insert_aw, vp = vplayout(x = 58:68, y = 23:33))
+} else if (rlow_factor2 == "elderly") {
+  print(insert_ew, vp = vplayout(x = 58:68, y = 23:33))
 }
-grid::grid.text(rlow_femnumber, just = "left", y = unit(0.48, "npc"), x = unit(0.35, "npc"), gp = gpar(col = infographics_colour2, fontsize = 36, fontface = "bold"))
-grid::grid.text(paste(rlow_factor, "female"), just = "left", y = unit(0.45, "npc"), x = unit(0.35, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
-grid::grid.text("out of every", just = "left", y = unit(0.43, "npc"), x = unit(0.35, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
-grid::grid.text("100,000", just = "left", y = unit(0.41, "npc"), x = unit(0.35, "npc"), gp = gpar(col = infographics_colour2, fontsize = 20))
-grid::grid.text(rlow_age, just = "left", y = unit(0.39, "npc"), x = unit(0.35, "npc"), gp = gpar(col = infographics_colour2, fontsize = 8))
+grid::grid.text(rlow_femnumber, just = "left", y = unit(0.48, "npc"), x = unit(0.37, "npc"), gp = gpar(col = infographics_colour2, fontsize = 36, fontface = "bold"))
+grid::grid.text(paste(rlow_factor2, "female"), just = "left", y = unit(0.45, "npc"), x = unit(0.37, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
+grid::grid.text("out of every", just = "left", y = unit(0.43, "npc"), x = unit(0.37, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
+grid::grid.text("100,000", just = "left", y = unit(0.41, "npc"), x = unit(0.37, "npc"), gp = gpar(col = infographics_colour2, fontsize = 20))
+grid::grid.text(rlow_age, just = "left", y = unit(0.39, "npc"), x = unit(0.37, "npc"), gp = gpar(col = infographics_colour2, fontsize = 8))
 
-grid::grid.text(paste(str_to_title(rhigh_factor), "male rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.5, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
-if (rhigh_factor == "infants") {
-  print(insert_baby1, vp = vplayout(x = 58:68, y = 38:48))
-} else if (rhigh_factor %in% c("youth", "adult")) {
-  print(insert_am, vp = vplayout(x = 58:68, y = 38:48))
-} else if (rhigh_factor == "elderly") {
-  print(insert_em, vp = vplayout(x = 58:68, y = 38:48))
-}
-
-grid::grid.text(rhigh_malenumber, just = "left", y = unit(0.48, "npc"), x = unit(0.56, "npc"), gp = gpar(col = infographics_colour, fontsize = 36, fontface = "bold"))
-grid::grid.text(paste(rhigh_factor, "male"), just = "left", y = unit(0.45, "npc"), x = unit(0.56, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
-grid::grid.text("out of every", just = "left", y = unit(0.43, "npc"), x = unit(0.56, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
-grid::grid.text("100,000", just = "left", y = unit(0.41, "npc"), x = unit(0.56, "npc"), gp = gpar(col = infographics_colour, fontsize = 20))
-grid::grid.text(rhigh_age, just = "left", y = unit(0.39, "npc"), x = unit(0.56, "npc"), gp = gpar(col = infographics_colour, fontsize = 8))
-
-grid::grid.text(paste(str_to_title(rhigh_factor), "female rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.7, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
-if (rhigh_factor == "infants") {
-  print(insert_baby2, vp = vplayout(x = 58:68, y = 55:65))
-} else if (rhigh_factor %in% c("youth", "adult")) {
-  print(insert_aw, vp = vplayout(x = 58:68, y = 55:65))
-} else if (rhigh_factor == "elderly") {
-  print(insert_ew, vp = vplayout(x = 58:68, y = 55:65))
+grid::grid.text(paste(str_to_title(rhigh_factor2), "male rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.58, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+if (rhigh_factor2 == "infant") {
+  print(insert_baby1, vp = vplayout(x = 58:68, y = 42:52))
+} else if (rhigh_factor2 == "youth") {
+  print(insert_am, vp = vplayout(x = 60:68, y = 42:52))
+} else if (rhigh_factor2 == "adult") {
+  print(insert_am, vp = vplayout(x = 58:68, y = 42:52))
+} else if (rhigh_factor2 == "elderly") {
+  print(insert_em, vp = vplayout(x = 58:68, y = 42:52))
 }
 
-grid::grid.text(rhigh_femnumber, just = "left", y = unit(0.48, "npc"), x = unit(0.77, "npc"), gp = gpar(col = infographics_colour2, fontsize = 36, fontface = "bold"))
-grid::grid.text(paste(rhigh_factor, "female"), just = "left", y = unit(0.45, "npc"), x = unit(0.77, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
-grid::grid.text("out of every", just = "left", y = unit(0.43, "npc"), x = unit(0.77, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
-grid::grid.text("100,000", just = "left", y = unit(0.41, "npc"), x = unit(0.77, "npc"), gp = gpar(col = infographics_colour2, fontsize = 20))
-grid::grid.text(rhigh_age, just = "left", y = unit(0.39, "npc"), x = unit(0.77, "npc"), gp = gpar(col = infographics_colour2, fontsize = 8))
+grid::grid.text(rhigh_malenumber, just = "left", y = unit(0.48, "npc"), x = unit(0.6, "npc"), gp = gpar(col = infographics_colour, fontsize = 36, fontface = "bold"))
+grid::grid.text(paste(rhigh_factor2, "male"), just = "left", y = unit(0.45, "npc"), x = unit(0.6, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+grid::grid.text("out of every", just = "left", y = unit(0.43, "npc"), x = unit(0.6, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+grid::grid.text("100,000", just = "left", y = unit(0.41, "npc"), x = unit(0.6, "npc"), gp = gpar(col = infographics_colour, fontsize = 20))
+grid::grid.text(rhigh_age, just = "left", y = unit(0.39, "npc"), x = unit(0.6, "npc"), gp = gpar(col = infographics_colour, fontsize = 8))
+
+grid::grid.text(paste(str_to_title(rhigh_factor2), "female rate"), just = "left", y = unit(0.51, "npc"), x = unit(0.75, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
+if (rhigh_factor2 == "infant") {
+  print(insert_baby2, vp = vplayout(x = 58:68, y = 59:69))
+} else if (rhigh_factor2 == "youth") {
+  print(insert_aw, vp = vplayout(x = 60:68, y = 59:69))
+} else if (rhigh_factor2 == "adult") {
+  print(insert_aw, vp = vplayout(x = 58:68, y = 59:69))
+} else if (rhigh_factor2 == "elderly") {
+  print(insert_ew, vp = vplayout(x = 58:68, y = 59:69))
+}
+
+grid::grid.text(rhigh_femnumber, just = "left", y = unit(0.48, "npc"), x = unit(0.81, "npc"), gp = gpar(col = infographics_colour2, fontsize = 36, fontface = "bold"))
+grid::grid.text(paste(rhigh_factor2, "female"), just = "left", y = unit(0.45, "npc"), x = unit(0.81, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
+grid::grid.text("out of every", just = "left", y = unit(0.43, "npc"), x = unit(0.81, "npc"), gp = gpar(col = infographics_colour2, fontsize = 12))
+grid::grid.text("100,000", just = "left", y = unit(0.41, "npc"), x = unit(0.81, "npc"), gp = gpar(col = infographics_colour2, fontsize = 20))
+grid::grid.text(rhigh_age, just = "left", y = unit(0.39, "npc"), x = unit(0.81, "npc"), gp = gpar(col = infographics_colour2, fontsize = 8))
 
 #bottom left
 grid::grid.text(common_source, just = "left", y = unit(0.3, "npc"), x = unit(0.07, "npc"), gp = gpar(col = infographics_colour, fontsize = 22))
@@ -562,8 +593,15 @@ print(doughnut_plot, vp = vplayout(x = 85:115, y = 7:37))
 grid::grid.text(crown_copyright, just = "left", y = unit(0.03, "npc"), x = unit(0.07, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
 
 #bottom right
-grid::grid.text("Most cases are", just = "right", y = unit(0.31, "npc"), x = unit(0.92, "npc"), gp = gpar(col = infographics_colour, fontsize = 18))
-grid::grid.text(most_cases, just = "right", y = unit(0.28, "npc"), x = unit(0.92, "npc"), gp = gpar(col = infographics_colour, fontsize = 24, fontface = "bold"))
+if (is.null(most_cases)) {
+  grid::grid.text("Cases are equally", just = "right", y = unit(0.31, "npc"), x = unit(0.92, "npc"), gp = gpar(col = infographics_colour, fontsize = 14))
+  grid::grid.text("divided amongst", just = "right", y = unit(0.29, "npc"), x = unit(0.92, "npc"), gp = gpar(col = infographics_colour, fontsize = 14))
+  grid::grid.text("community- and hospital-onsets", just = "right", y = unit(0.27, "npc"), x = unit(0.92, "npc"), gp = gpar(col = infographics_colour, fontsize = 14))
+} else {
+  grid::grid.text("Most cases are", just = "right", y = unit(0.31, "npc"), x = unit(0.92, "npc"), gp = gpar(col = infographics_colour, fontsize = 18))
+  grid::grid.text(most_cases, just = "right", y = unit(0.28, "npc"), x = unit(0.92, "npc"), gp = gpar(col = infographics_colour, fontsize = 24, fontface = "bold"))
+}
+
 
 print(insert_house, vp = vplayout(x = 87:102, y = 47:62))
 grid::grid.text(paste0(community_percent, "%"), just = "left", y = unit(0.11, "npc"), x = unit(0.61, "npc"), gp = gpar(col = infographics_colour, fontsize = 28, fontface = "bold"))
