@@ -1,0 +1,21 @@
+---
+title: "Infographics"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## DESCRIPTION
+
+## INITIAL SETUP
+
+## USAGE
+
+## Examples
+
+# Contact:
+
+
+https://bookdown.org/yihui/rmarkdown/html-document.html#table-of-contents

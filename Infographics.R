@@ -1,12 +1,12 @@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
-#@     INFOGRAPHICS v.01    @#
+#@     INFOGRAPHICS v.02    @#
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
 ##############################
 #   INPUT INFORMATION        #
 ##############################
 
 # Title - enter number from the list below
-info_type <- 6
+info_type <- 2
 # 1 - C. difficile infection
 # 2 - E. coli bacteraemia
 # 3 - Klebsiella spp. bacteraemia
@@ -15,13 +15,13 @@ info_type <- 6
 # 6 - Pseudomonas Aeruginosa Bacteraemia
 
 # Overall rate (top)
-rate_number <- 15 #must be integer value
+rate_number <- 15     #must be integer value
 plot_data   <- data.frame(years = c("2011/12", "2012/13", "2013/14", "2014/15", "2015/16", "2017/19", "2019/20", "2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26", "2026/27", "2027/28"),
                         rate = c(15, 15.5, 15.7, 20, 33, 15, 15.5, 15.7, 20, 33, 15, 24, 24, 65, 31))
 
 # Risk greater among (middle) - enter pair of numbers from the list below
-rhigh_factor  <- 7
-rlow_factor   <- 4
+rhigh_factor  <- 7    #Max risk age group 
+rlow_factor   <- 4    #Min risk age grop
 # 1 - infants         (age < 1)
 # 2 - youth           (age  1 - 14)
 # 3 - young adults    (age 15 - 44)
@@ -75,42 +75,42 @@ if (info_type == 1) {
   title_name1 <- "C. difficile"
   italize_title <- T
   title_name2 <- "Infection"
-  plot_name <- "C. difficile infection"
+  plot_name <- bquote("Trands in rates of"~italic(.("C. difficile")) ~"bacteraemia")
   infographics_colour   <- "#E9994A"
   infographics_colour2  <- "#002776"
 } else if (info_type == 2) {
   title_name1 <- "E. coli"
   italize_title <- T
   title_name2 <- "Bacteraemia"
-  plot_name <- "E. coli bacteraemia"
+  plot_name <- bquote("Trands in rates of"~italic(.("E. coli")) ~"bacteraemia")
   infographics_colour   <- "#00549F"
   infographics_colour2  <- "#A4AEB5"
 } else if (info_type == 3) {
   title_name1 <- "Klebsiella spp."
   italize_title <- T
   title_name2 <- "Bacteraemia"
-  plot_name <- "Klebsiella spp. bacteraemia"
+  plot_name <- bquote("Trands in rates of"~italic(.("Klebsiella spp.")) ~"bacteraemia")
   infographics_colour   <- "#00A551"
   infographics_colour2  <- "#8CB8C6"
 } else if (info_type == 4) {
   title_name1 <- "MRSA"
   italize_title <- F
   title_name2 <- "Bacteraemia"
-  plot_name <- "MRSA bacteraemia"
+  plot_name <- bquote("Trands in rates of MRSA bacteraemia")
   infographics_colour   <- "#532D6D"
   infographics_colour2  <- "#C51A4A"
 } else if (info_type == 5) {
   title_name1 <- "MSSA"
   italize_title <- F
   title_name2 <- "Bacteraemia"
-  plot_name <- "MSSA bacteraemia"
+  plot_name <- bquote("Trands in rates of MSSA bacteraemia")
   infographics_colour   <- "#00B092"
   infographics_colour2  <- "#DAD7CB"
 } else if (info_type == 6) {
   title_name1 <- "Pseudomonas Aeruginosa"
   italize_title <- T
   title_name2 <- "Bactereamia"
-  plot_name <- "Pseudomonas Aeruginosa \nbacteraemia"
+  plot_name <- bquote("Trands in rates of"~italic(.("Pseudomonas Aeruginosa")))
   infographics_colour   <- "#822433"
   infographics_colour2  <- "#EAAB00"
 }
@@ -218,7 +218,7 @@ background_colour     <- "#efe3af"
 palette_fun = colorRampPalette(c(infographics_colour, infographics_colour2))
 doughnut_palette <- palette_fun(dim(doughnut_data)[1])
 
-# Copied from PHECHARTS
+# Copied from PHECHARTS - TO BE DELETED
 # red           822433    PSEUDO 1
 # teal          00B092    MSSA 1
 # navy          002776    C. difficile 2
@@ -370,6 +370,7 @@ create_elderw(elder_woman, "insert_ew")
 create_baby(baby, "insert_baby1", infographics_colour)
 create_baby(baby, "insert_baby2", infographics_colour2)
 
+#TO BE DELTED 4 below?
 low_male <- insert_am
 low_female <- insert_aw
 high_male <- insert_em
@@ -389,14 +390,18 @@ top_plot <- ggplot(plot_data, aes(x = years, y = rate, group = 1)) +
   geom_line(size = 2, colour = infographics_colour) + 
   ylim(0,max(plot_data$rate)) + 
   xlab("Financial Year") + ylab("Rate, per \n1000,000 population") +
-  ggtitle(paste("Trends in rates of ", plot_name)) +
+  labs(title = plot_name) +
   theme(axis.title = element_text(color = infographics_colour)) +
   theme(plot.title = element_text(color = infographics_colour, face = "bold", size = 12 )) +
+  theme(plot.subtitle = element_text(color = infographics_colour, size = 12, hjust = 0.5 )) +
   theme (axis.text = element_text(color = infographics_colour)) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
   theme(panel.grid.major.y = element_line(color = infographics_colour)) +
   theme(plot.margin = unit(c(0,0,0,0), "cm"))  +
-  theme(plot.background =  element_rect(fill = background_colour)) 
+  theme(plot.background =  element_rect(fill = background_colour)) +
+  if (info_type == 6){labs(subtitle = tolower(title_name2))} 
+
+top_plot
 
 ggsave(filename = "top.png", plot = top_plot, device = "png", path = getwd(), width = 5, height = 3)
 create_element("top.png", "insert_plot")
@@ -430,10 +435,10 @@ doughnut_plot <-
 ################################
 ################################
 
-create_infographics <- function() {
+create_infographics <- function(output_name = "Infographics.pdf") {
 
 #PDF SETUP
-grDevices::cairo_pdf("Info2.pdf", onefile = T, width = 8.27, height = 11.69)
+grDevices::cairo_pdf(output_name, onefile = T, width = 8.27, height = 11.69)
   
 grid::grid.newpage()
 grid::pushViewport(grid::viewport(layout = grid::grid.layout(nrow = 117, ncol = 83, widths = unit(0.1, "inches"), heights = unit(0.1, "inches"))))
@@ -497,12 +502,23 @@ if (rate_number <= 9) {
 grid::grid.text("people out of every", just = "left", y = unit(0.75, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
 grid::grid.text("100,000", just = "left", y = unit(0.7, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour2, fontsize = 38))
 grid::grid.text("will acquire an", just = "left", y = unit(0.67, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+
 if (title_length_combined <= 19) {
-  grid::grid.text(paste(title_name1, title_name2), just = "left", y = unit(0.65, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
-  
-} else {
+  if (italize_title == T) {
+    grid::grid.text(paste(title_name1), just = "left", y = unit(0.65, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12, fontface = "italic"))
+    grid::grid.text(paste(tolower(title_name2)), just = "left", y = unit(0.65, "npc"), x = unit(0.26, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+    } else if (italize_title == F) {
   grid::grid.text(paste(title_name1), just = "left", y = unit(0.65, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
-  grid::grid.text(paste(title_name2), just = "left", y = unit(0.63, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+  grid::grid.text(paste(tolower(title_name2)), just = "left", y = unit(0.65, "npc"), x = unit(0.26, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+}
+} else {
+  if (italize_title == T) {
+     grid::grid.text(paste(title_name1), just = "left", y = unit(0.65, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12, fontface = "italic"))
+     grid::grid.text(paste(tolower(title_name2)), just = "left", y = unit(0.63, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+  } else if (italize_title == F) {
+     grid::grid.text(paste(title_name1), just = "left", y = unit(0.65, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+     grid::grid.text(paste(tolower(title_name2)), just = "left", y = unit(0.63, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
+  }
 }
 
 if (rate_number <= 49) {
