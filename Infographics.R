@@ -61,6 +61,7 @@ library(stringr)          # string operations
 library(RColorBrewer)     # colour palette for bottom left figure
 library(Cairo)            # unicode characters in pdf
 library(gridExtra)        # waffle chart
+library(ggrepel)          # text align in plots
 
 ##############################
 #       PRE-PROCESSING       #
@@ -435,9 +436,11 @@ doughnut_plot <-
 ################################
 ################################
 
-create_infographics <- function(output_name = "Infographics.pdf") {
+create_infographics <- function(output_name = "Infographics.pdf", output_path = "~") {
 
 #PDF SETUP
+temp_wd = getwd()
+setwd(output_path)
 grDevices::cairo_pdf(output_name, onefile = T, width = 8.27, height = 11.69)
   
 grid::grid.newpage()
@@ -632,5 +635,7 @@ grid::grid.text("https://www.gov.uk/government/statistics/mrsa-mssa-and-e-coli-b
 grid::grid.text("annual-epidemiological-commentary", just = "left", y = unit(0.03, "npc"), x = unit(0.52, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
 
 #CREATE PDF AND CLOSE DEVICE
+setwd(temp_wd)
+print(paste0(output_name, " was saved in ", path.expand(output_path)))
 grDevices::dev.off()
 }
