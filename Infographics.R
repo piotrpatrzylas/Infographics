@@ -6,7 +6,7 @@
 ##############################
 
 # Title - enter number from the list below
-info_type <- 1
+info_type <- 2
 # 1 - C. difficile infection
 # 2 - E. coli bacteraemia
 # 3 - Klebsiella spp. bacteraemia
@@ -15,7 +15,7 @@ info_type <- 1
 # 6 - Pseudomonas Aeruginosa Bacteraemia
 
 # Overall rate (top)
-rate_number <- 15     #must be integer value
+rate_number <- 9.8    #must be numeric
 plot_data   <- data.frame(years = c("2011/12", "2012/13", "2013/14", "2014/15", "2015/16", "2017/19", "2019/20", "2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26", "2026/27", "2027/28"),
                         rate = c(15, 15.5, 15.7, 20, 33, 15, 15.5, 15.7, 20, 33, 15, 24, 24, 65, 31))
 
@@ -123,6 +123,9 @@ if (info_type == 1) {
   infographics_colour   <- "#ffd700"
   infographics_colour2  <- "#cccc00"
 }
+
+get_waffle_integers <- floor(rate_number)
+waffle_decimals <- rate_number - get_waffle_integers
 
 if (is.null(location_manually)) {
   title_place <- "England"
@@ -261,6 +264,9 @@ hospital <- "hospital.png"
 elder_man <- "elder_m.jpg"
 elder_woman <- "elder_w.png"
 adult_man <- "adult_m.png"
+adult_man25 <- "adult_m25.png"
+adult_man50 <- "adult_m50.png"
+adult_man75 <- "adult_m75.png"
 adult_woman <- "adult_w.png"
 baby <- "baby.png"
 people <- "people.png"
@@ -308,6 +314,34 @@ create_adultm <- function (image_file, output) {
   r_object <- image_fill(r_object, background_colour, point = "+4+2", fuzz = 0)
   r_object <- image_fill(r_object, infographics_colour, point = "+40+20", fuzz = 50)
   r_object <- image_fill(r_object, infographics_colour, point = "+50+85", fuzz = 50)
+  r_object <- ggplot(empty_plot) + draw_image(r_object)
+  assign(output, r_object, env = .GlobalEnv)
+}
+
+
+create_adultm25 <- function (image_file, output) {
+  r_object <- image_read(image_file)
+  r_object <- image_fill(r_object, background_colour, point = "+4+2", fuzz = 0)
+  r_object <- image_fill(r_object, infographics_colour, point = "+30+200", fuzz = 50)
+  r_object <- image_fill(r_object, infographics_colour, point = "+60+200", fuzz = 50)
+  r_object <- ggplot(empty_plot) + draw_image(r_object)
+  assign(output, r_object, env = .GlobalEnv)
+}
+
+create_adultm50 <- function (image_file, output) {
+  r_object <- image_read(image_file)
+  r_object <- image_fill(r_object, background_colour, point = "+4+2", fuzz = 0)
+  r_object <- image_fill(r_object, infographics_colour, point = "+10+120", fuzz = 50)
+  r_object <- image_fill(r_object, infographics_colour, point = "+80+120", fuzz = 50)
+  r_object <- image_fill(r_object, infographics_colour, point = "+40+120", fuzz = 50)
+  r_object <- ggplot(empty_plot) + draw_image(r_object)
+  assign(output, r_object, env = .GlobalEnv)
+}
+
+create_adultm75 <- function (image_file, output) {
+  r_object <- image_read(image_file)
+  r_object <- image_fill(r_object, background_colour, point = "+4+2", fuzz = 0)
+  r_object <- image_fill(r_object, infographics_colour, point = "+50+100", fuzz = 50)
   r_object <- ggplot(empty_plot) + draw_image(r_object)
   assign(output, r_object, env = .GlobalEnv)
 }
@@ -386,6 +420,10 @@ create_elderw(elder_woman, "insert_ew")
 create_baby(baby, "insert_baby1", infographics_colour)
 create_baby(baby, "insert_baby2", infographics_colour2)
 
+create_adultm25(adult_man25, "insert_am25")
+create_adultm50(adult_man50, "insert_am50")
+create_adultm75(adult_man75, "insert_am75")
+
 #TO BE DELTED 4 below?
 low_male <- insert_am
 low_female <- insert_aw
@@ -417,18 +455,38 @@ top_plot <- ggplot(plot_data, aes(x = years, y = rate, group = 1)) +
   theme(plot.background =  element_rect(fill = background_colour)) +
   if (info_type == 6){labs(subtitle = tolower(title_name2))} 
 
-
 ggsave(filename = "top.png", plot = top_plot, device = "png", path = getwd(), width = 5, height = 3)
 create_element("top.png", "insert_plot")
 
 
-#waffle plot - to be changed
+#waffle plot
+if (waffle_decimals == 0) {
+  insert_extra <- NULL
+} else if(waffle_decimals < 0.35) {
+  insert_extra <- insert_am25
+} else if (waffle_decimals >= 0.35 & waffle_decimals < 0.65) {
+  insert_extra <- insert_am50
+} else if (waffle_decimals >= 0.65) {
+  insert_extra <- insert_am75
+}
+
 waffle_element <- insert_am + 
   theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
   xlab(NULL) + ylab(NULL)
 
+if (is.null(insert_extra)) {
+  waffle_plot <- eval(parse(text = paste("plot_grid(", 
+                                         paste(rep("waffle_element", times = get_waffle_integers), collapse = ","), ", scale = 1.1)")))
+}
+
+if (!is.null(insert_extra)) {
+waffle_extra <- insert_extra + 
+  theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
+  xlab(NULL) + ylab(NULL)
+
 waffle_plot <- eval(parse(text = paste("plot_grid(", 
-                        paste(rep("waffle_element", times = rate_number), collapse = ","), ", scale = 1.1)")))
+                        paste(rep("waffle_element", times = get_waffle_integers), collapse = ","), ", waffle_extra, scale = 1.1)")))
+}
 
 #bottom left
 doughnut_plot <-
