@@ -6,7 +6,7 @@
 ##############################
 
 # Title - enter number from the list below
-info_type <- 2
+info_type <- 1
 # 1 - C. difficile infection
 # 2 - E. coli bacteraemia
 # 3 - Klebsiella spp. bacteraemia
@@ -44,6 +44,14 @@ doughnut_data     <- data.frame(
 community_percent <- 66   #must be numeric
 hospital_percent <- 33    #must be numeric
 
+#CDI Only
+previous_year <- "2007/08"
+
+community_percent_old <- 40
+hospital_percent_old <- 60
+community_percent_new <- 60
+hospital_percent_new <- 40
+
 # Change manually location / year in the title:
 location_manually <- NULL
 year_manually <- NULL
@@ -77,43 +85,43 @@ if (info_type == 1) {
   italize_title <- T
   title_name2 <- "Infection"
   plot_name <- bquote("Trands in rates of"~italic(.("C. difficile")) ~"bacteraemia")
-  infographics_colour   <- "#E9994A"
-  infographics_colour2  <- "#002776"
+  infographics_colour   <- "#ff8c00"
+  infographics_colour2  <- "#ffa500"
 } else if (info_type == 2) {
   title_name1 <- "E. coli"
   italize_title <- T
   title_name2 <- "Bacteraemia"
   plot_name <- bquote("Trands in rates of"~italic(.("E. coli")) ~"bacteraemia")
-  infographics_colour   <- "#00549F"
-  infographics_colour2  <- "#A4AEB5"
+  infographics_colour   <- "#00008b"
+  infographics_colour2  <- "#72bcd4"
 } else if (info_type == 3) {
   title_name1 <- "Klebsiella spp."
   italize_title <- T
   title_name2 <- "Bacteraemia"
   plot_name <- bquote("Trands in rates of"~italic(.("Klebsiella spp.")) ~"bacteraemia")
-  infographics_colour   <- "#00A551"
-  infographics_colour2  <- "#8CB8C6"
+  infographics_colour   <- "#008000"
+  infographics_colour2  <- "#8fbc8f"
 } else if (info_type == 4) {
   title_name1 <- "MRSA"
   italize_title <- F
   title_name2 <- "Bacteraemia"
   plot_name <- bquote("Trands in rates of MRSA bacteraemia")
-  infographics_colour   <- "#532D6D"
-  infographics_colour2  <- "#C51A4A"
+  infographics_colour   <- "#cd5c5c"
+  infographics_colour2  <- "#db7093"
 } else if (info_type == 5) {
   title_name1 <- "MSSA"
   italize_title <- F
   title_name2 <- "Bacteraemia"
   plot_name <- bquote("Trands in rates of MSSA bacteraemia")
-  infographics_colour   <- "#00B092"
-  infographics_colour2  <- "#DAD7CB"
+  infographics_colour   <- "#00468b"
+  infographics_colour2  <- "#add8e6"
 } else if (info_type == 6) {
   title_name1 <- "Pseudomonas Aeruginosa"
   italize_title <- T
   title_name2 <- "Bactereamia"
   plot_name <- bquote("Trands in rates of"~italic(.("Pseudomonas Aeruginosa")))
-  infographics_colour   <- "#822433"
-  infographics_colour2  <- "#EAAB00"
+  infographics_colour   <- "#ffd700"
+  infographics_colour2  <- "#cccc00"
 }
 
 if (is.null(location_manually)) {
@@ -213,25 +221,30 @@ if (community_percent < hospital_percent) {
   most_cases <- NULL
 }
 
+
+#CDI ONLY
+if (community_percent_old < hospital_percent_old) {
+  most_cases_old <- "hospital-onset"
+} else if (hospital_percent_old < community_percent_old) {
+  most_cases_old <- "community-onset"
+} else if (hospital_percent_old == community_percent_old) {
+  most_cases_old <- NULL
+}
+
+if (community_percent_new < hospital_percent_new) {
+  most_cases_new <- "hospital-onset"
+} else if (hospital_percent_new < community_percent_new) {
+  most_cases_new <- "community-onset"
+} else if (hospital_percent_new == community_percent_new) {
+  most_cases_new <- NULL
+}
+
+
 #colours
 background_colour     <- "#efe3af"
 
 palette_fun = colorRampPalette(c(infographics_colour, infographics_colour2))
 doughnut_palette <- palette_fun(dim(doughnut_data)[1])
-
-# Copied from PHECHARTS - TO BE DELETED
-# red           822433    PSEUDO 1
-# teal          00B092    MSSA 1
-# navy          002776    C. difficile 2
-# mushroom      DAD7CB    MSSA 2
-# coolgrey      A4AEB5    E. coli 2
-# peach         E9994A    C. difficile 1
-# yellow        EAAB00    PSEUDO 2
-# grass         00A551    Kleb 1
-# sky           8CB8C6    Kleb 2
-# moonlight     00549F    E. coli 1
-# plum          532D6D    MRSA 1
-# rose          C51A4A    MRSA 2
 
 ##############################
 #       EXTERNAL FILES       #
@@ -241,6 +254,7 @@ logo_location <- "logo.jpg"
 left_squarecircle <- "left square circle.jpg"
 right_squarecircle <- "right square circle.jpg"
 left_rectcircle <- "left rect cricle.jpg"
+left_rectcircle_cdi <- "left rect cricle CDI.jpg"
 right_rectcircle <- "right rect cricle.jpg"
 house <- "home.png"
 hospital <- "hospital.png"
@@ -360,6 +374,7 @@ create_element(logo_location, "insert_logo")
 create_element(left_squarecircle, "insert_left_squarecircle")
 create_element(right_squarecircle, "insert_right_squarecircle")
 create_element(left_rectcircle, "insert_left_rectcircle")
+create_element(left_rectcircle_cdi, "insert_left_rectcircle_cdi")
 create_element(right_rectcircle, "insert_right_rectcircle")
 
 create_people(people, "insert_people")
@@ -402,7 +417,6 @@ top_plot <- ggplot(plot_data, aes(x = years, y = rate, group = 1)) +
   theme(plot.background =  element_rect(fill = background_colour)) +
   if (info_type == 6){labs(subtitle = tolower(title_name2))} 
 
-top_plot
 
 ggsave(filename = "top.png", plot = top_plot, device = "png", path = getwd(), width = 5, height = 3)
 create_element("top.png", "insert_plot")
@@ -488,8 +502,6 @@ if (title_length_combined <= 19) {
   }}
 
 #background shapes
-print(insert_left_squarecircle, vp = vplayout(x = 75:117, y = 1:46))
-print(insert_right_squarecircle, vp = vplayout(x = 75:117, y = 38:83))
 print(insert_left_rectcircle, vp = vplayout(x = 15:55, y = 1:83))
 print(insert_right_rectcircle, vp = vplayout(x = 40:85, y = 1:83))
 
@@ -603,6 +615,13 @@ grid::grid.text("out of every", just = "left", y = unit(0.43, "npc"), x = unit(0
 grid::grid.text("100,000", just = "left", y = unit(0.41, "npc"), x = unit(0.81, "npc"), gp = gpar(col = infographics_colour2, fontsize = 20))
 grid::grid.text(rhigh_age, just = "left", y = unit(0.39, "npc"), x = unit(0.81, "npc"), gp = gpar(col = infographics_colour2, fontsize = 8))
 
+
+if (info_type %in% c(2:6)) {
+  
+#element
+  print(insert_left_squarecircle, vp = vplayout(x = 75:117, y = 1:46))
+  print(insert_right_squarecircle, vp = vplayout(x = 75:117, y = 38:83))
+  
 #bottom left
 grid::grid.text(common_source, just = "left", y = unit(0.3, "npc"), x = unit(0.07, "npc"), gp = gpar(col = infographics_colour, fontsize = 22))
 grid::grid.text("infections are the most common source", just = "left", y = unit(0.27, "npc"), x = unit(0.07, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
@@ -628,14 +647,65 @@ grid::grid.text("< 2 days", just = "left", y = unit(0.08, "npc"), x = unit(0.61,
 
 print(insert_hospital, vp = vplayout(x = 87:102, y = 62:77))
 grid::grid.text(paste0(hospital_percent, "%"), just = "left", y = unit(0.11, "npc"), x = unit(0.8, "npc"), gp = gpar(col = infographics_colour2, fontsize = 28, fontface = "bold"))
-grid::grid.text(paste(expression("\U2265 days")), just = "left", y = unit(0.08, "npc"), x = unit(0.8, "npc"), gp = gpar(col = infographics_colour2, fontsize = 14, fontface = "bold"))
+grid::grid.text(paste(expression("\U2265 2 days")), just = "left", y = unit(0.08, "npc"), x = unit(0.8, "npc"), gp = gpar(col = infographics_colour2, fontsize = 14, fontface = "bold"))
 
 grid::grid.text("For full report, please see", just = "left", y = unit(0.05, "npc"), x = unit(0.52, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
 grid::grid.text("https://www.gov.uk/government/statistics/mrsa-mssa-and-e-coli-bacteraemia-and-c-difficile-infection-", just = "left", y = unit(0.04, "npc"), x = unit(0.52, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
 grid::grid.text("annual-epidemiological-commentary", just = "left", y = unit(0.03, "npc"), x = unit(0.52, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
 
+} else if (info_type == 1) {
+  print(insert_left_rectcircle_cdi, vp = vplayout(x = 75:115, y = 1:83))
+  
+  if (is.null(most_cases_old)) {
+    grid::grid.text(paste0(previous_year, " Cases are equally"), just = "left", y = unit(0.31, "npc"), x = unit(0.1, "npc"), gp = gpar(col = infographics_colour, fontsize = 14))
+    grid::grid.text("divided amongst community-", just = "left", y = unit(0.29, "npc"), x = unit(0.1, "npc"), gp = gpar(col = infographics_colour, fontsize = 14))
+    grid::grid.text("and hospital-onsets", just = "left", y = unit(0.27, "npc"), x = unit(0.1, "npc"), gp = gpar(col = infographics_colour, fontsize = 14))
+  } else {
+    grid::grid.text(paste0(previous_year, " Most cases are"), just = "left", y = unit(0.31, "npc"), x = unit(0.1, "npc"), gp = gpar(col = infographics_colour, fontsize = 18))
+    grid::grid.text(most_cases_old, just = "left", y = unit(0.28, "npc"), x = unit(0.1, "npc"), gp = gpar(col = infographics_colour, fontsize = 24, fontface = "bold"))
+  }
+  
+  print(insert_house, vp = vplayout(x = 87:102, y = 7:22))
+  grid::grid.text(paste0(community_percent_old, "%"), just = "left", y = unit(0.11, "npc"), x = unit(0.11, "npc"), gp = gpar(col = infographics_colour, fontsize = 28, fontface = "bold"))
+  grid::grid.text("< 2 days", just = "left", y = unit(0.08, "npc"), x = unit(0.11, "npc"), gp = gpar(col = infographics_colour, fontsize = 14, fontface = "bold"))
+  
+  
+  print(insert_hospital, vp = vplayout(x = 87:102, y = 22:37))
+  grid::grid.text(paste0(hospital_percent_old, "%"), just = "left", y = unit(0.11, "npc"), x = unit(0.31, "npc"), gp = gpar(col = infographics_colour2, fontsize = 28, fontface = "bold"))
+  grid::grid.text(paste(expression("\U2265 4 days")), just = "left", y = unit(0.08, "npc"), x = unit(0.31, "npc"), gp = gpar(col = infographics_colour2, fontsize = 14, fontface = "bold"))
+  
+  if (is.null(most_cases_new)) {
+    grid::grid.text(paste0(as.numeric(this_year)-1,"/", substr(this_year, 3, 4)," Cases are equally"), just = "left", y = unit(0.31, "npc"), x = unit(0.5, "npc"), gp = gpar(col = infographics_colour, fontsize = 14))
+    grid::grid.text("divided amongst community-", just = "left", y = unit(0.29, "npc"), x = unit(0.5, "npc"), gp = gpar(col = infographics_colour, fontsize = 14))
+    grid::grid.text("and hospital-onsets", just = "left", y = unit(0.27, "npc"), x = unit(0.5, "npc"), gp = gpar(col = infographics_colour, fontsize = 14))
+  } else {
+    grid::grid.text(paste0(as.numeric(this_year)-1, "/", substr(this_year, 3, 4), " Most cases are"), just = "left", y = unit(0.31, "npc"), x = unit(0.5, "npc"), gp = gpar(col = infographics_colour, fontsize = 18))
+    grid::grid.text(most_cases_new, just = "left", y = unit(0.28, "npc"), x = unit(0.5, "npc"), gp = gpar(col = infographics_colour, fontsize = 24, fontface = "bold"))
+  }
+  
+  print(insert_house, vp = vplayout(x = 87:102, y = 42:57))
+  grid::grid.text(paste0(community_percent_new, "%"), just = "left", y = unit(0.11, "npc"), x = unit(0.55, "npc"), gp = gpar(col = infographics_colour, fontsize = 28, fontface = "bold"))
+  grid::grid.text("< 4 days", just = "left", y = unit(0.08, "npc"), x = unit(0.55, "npc"), gp = gpar(col = infographics_colour, fontsize = 14, fontface = "bold"))
+  
+  
+  print(insert_hospital, vp = vplayout(x = 87:102, y = 57:72))
+  grid::grid.text(paste0(hospital_percent_new, "%"), just = "left", y = unit(0.11, "npc"), x = unit(0.73, "npc"), gp = gpar(col = infographics_colour2, fontsize = 28, fontface = "bold"))
+  grid::grid.text(paste(expression("\U2265 4 days")), just = "left", y = unit(0.08, "npc"), x = unit(0.73, "npc"), gp = gpar(col = infographics_colour2, fontsize = 14, fontface = "bold"))
+  
+  
+  grid::grid.text(crown_copyright, just = "left", y = unit(0.05, "npc"), x = unit(0.07, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
+  
+  grid::grid.text("For full report, please see", just = "left", y = unit(0.06, "npc"), x = unit(0.22, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
+  grid::grid.text("https://www.gov.uk/government/statistics/mrsa-mssa-and-e-coli-bacteraemia-and-c-difficile-infection-annual-epidemiological-commentary", just = "left", y = unit(0.05, "npc"), x = unit(0.22, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
+ # grid::grid.text("annual-epidemiological-commentary", just = "left", y = unit(0.03, "npc"), x = unit(0.52, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
+  
+  
+  
+}
 #CREATE PDF AND CLOSE DEVICE
 setwd(temp_wd)
 print(paste0(output_name, " was saved in ", path.expand(output_path)))
 grDevices::dev.off()
 }
+
+#create_infographics("Test.pdf", "C:/Users/Piotr.Patrzylas/Desktop/")

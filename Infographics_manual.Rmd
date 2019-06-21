@@ -1,21 +1,58 @@
 ---
-title: "Infographics"
+title: "Infographics (v.02) "
+date: "17 June 2019"
 output: html_document
+organisation: Public Health England
+theme: readable
 ---
+# Description
+Script for printing icongraphics documents in PDF format. 
+Most elements in the output file are pre-defined, leaving to user selecting appropriate options and providing data. 
+This script is intented to run in Windows OS.
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+# Initial Setup
+Assuming R and R studio are installed and updated to the newest versions:
 
-## DESCRIPTION
+1. Download folder with all neccesary files from [here](https://github.com/piotrpatrzylas/Infographics)
+2. Go to that folder and open file "Infographics.R"
+3. Install mandatory packages with all dependencies:
+  - useful
+  - grid
+  - magick
+  - ggplot2
+  - cowplot
+  - stringr
+  - RColorBrewer
+  - Cairo
+  - gridExtra
+4. Setup input data 
+  - See below.
+5. Run the script - select all and run.
+  - Shortcut: Ctcl+A and Ctrl+Enter
+6. Run "Create_infocraphics"" funtion.
+  - Optional argument is to choose output file name. For example to have output file "MRSA 2019" you should run this function as follows:  
+    + Create_infographics("MRSA 2019.pdf")
+  - You'll also be asked to select output directory.
 
-## INITIAL SETUP
+# Input data and examples
 
-## USAGE
+After initial setup user should change/fill first part of the script.
+"Info_type" - expected value is numeric in range 1 to 6 for appropriate pdf document type (as described in the script).  
+"Rate_number" - expected value is integer.  
+"Plot_data" - expected value is data frame object with 2 columns: "years" and "rate".  
+"rhigh_factor"" - 
 
-## Examples
-
-# Contact:
 
 
-https://bookdown.org/yihui/rmarkdown/html-document.html#table-of-contents
+# Troubleshooting Q&A
+The best option is always to read carefully error message. 
+
+1. I can't install some packages.
+  - There could be many reasons why this happen. The best option is to read error message. For example, if some packages are required to be loaded before installation this need to be solved first. R packages become obsolete relatively quickly and over time some of the packages could be unavailable.Solution for this could be looking for archived version of these packages.
+
+
+2. Package was installed but error massage says it is still missing.
+  - Probably package was not loaded from local library to current R session. There might be also chance that package was not installed successfully or some of the package files are broken.
+    
+3. Can I run this script under other operating systems (Mac, Unix...)?
+  - This script was tested to work in Ms Windows OS. Trying to run it in other OSs could cause errors. For example in unix systems, like Ubuntu, some packages are unavailable / available under different name that will not work with this script (Magick).
