@@ -15,7 +15,7 @@ info_type <- 2
 # 6 - Pseudomonas Aeruginosa Bacteraemia
 
 # Overall rate (top)
-rate_number <- 9.8    #must be numeric
+rate_number <- 18.1   #must be numeric
 plot_data   <- data.frame(years = c("2011/12", "2012/13", "2013/14", "2014/15", "2015/16", "2017/19", "2019/20", "2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26", "2026/27", "2027/28"),
                         rate = c(15, 15.5, 15.7, 20, 33, 15, 15.5, 15.7, 20, 33, 15, 24, 24, 65, 31))
 
@@ -38,7 +38,7 @@ rlow_femnumber    <- 13   #must be numeric
 #Most common source of infection (bottom left) - may require formatting with \n for new line
 doughnut_data     <- data.frame(
   count = c(22, 23, 14, 6, 25, 10),
-  source = c("Unknown", "Other\nsources", "Respiratory\ntract", "Gastrointestinal", "Hepatibiliary", "UTI"))
+  source = c("Unknown", "Other sources", "Respiratory tract", "Gastrointestinal", "Hepatibiliary", "UTI"))
 
 #Most cases (bottom right)
 community_percent <- 66   #must be numeric
@@ -270,6 +270,7 @@ adult_man75 <- "adult_m75.png"
 adult_woman <- "adult_w.png"
 baby <- "baby.png"
 people <- "people.png"
+#cover_strip <- "cover strip.jpg" not in use yet
 
 ##############################
 #   FIXED ELEMENTS           #
@@ -410,6 +411,7 @@ create_element(right_squarecircle, "insert_right_squarecircle")
 create_element(left_rectcircle, "insert_left_rectcircle")
 create_element(left_rectcircle_cdi, "insert_left_rectcircle_cdi")
 create_element(right_rectcircle, "insert_right_rectcircle")
+create_element(cover_strip, "insert_cover_strip")
 
 create_people(people, "insert_people")
 
@@ -424,12 +426,6 @@ create_adultm25(adult_man25, "insert_am25")
 create_adultm50(adult_man50, "insert_am50")
 create_adultm75(adult_man75, "insert_am75")
 
-#TO BE DELTED 4 below?
-low_male <- insert_am
-low_female <- insert_aw
-high_male <- insert_em
-high_female <- insert_ew
-
 create_house(house, "insert_house")
 create_hospital(hospital, "insert_hospital")
 
@@ -443,7 +439,8 @@ crown_copyright <- paste0("\U00A9 Crown copyright ", this_year)
 top_plot <- ggplot(plot_data, aes(x = years, y = rate, group = 1)) +
   geom_line(size = 2, colour = infographics_colour) + 
   ylim(0,max(plot_data$rate)) + 
-  xlab("Financial Year") + ylab("Rate, per \n1000,000 population") +
+  xlab("Financial Year") + 
+  ylab("Rate, per \n1000,000 population") +
   labs(title = plot_name) +
   theme(axis.title = element_text(color = infographics_colour)) +
   theme(plot.title = element_text(color = infographics_colour, face = "bold", size = 12 )) +
@@ -457,7 +454,6 @@ top_plot <- ggplot(plot_data, aes(x = years, y = rate, group = 1)) +
 
 ggsave(filename = "top.png", plot = top_plot, device = "png", path = getwd(), width = 5, height = 3)
 create_element("top.png", "insert_plot")
-
 
 #waffle plot
 if (waffle_decimals == 0) {
@@ -491,14 +487,19 @@ waffle_plot <- eval(parse(text = paste("plot_grid(",
 #bottom left
 doughnut_plot <-
   ggplot(doughnut_data, aes(x = 2.5, y = doughnut_data$count)) +
-  geom_bar(width = 0.7, stat = "identity", color = background_colour, fill = doughnut_palette) +
+  geom_bar(width = 1.5, stat = "identity", color = background_colour, fill = doughnut_palette) +
   coord_polar(theta = 'y', start = 0) +
   scale_y_continuous(breaks=cumsum(doughnut_data$count) - doughnut_data$count / 2) +
-  geom_text(aes(x = 2.5, label = paste0(count, "%")), size = 2.5, color = "white", position = position_stack(vjust = 0.6)) +
-  geom_text(aes( x = 4, label = source), size = 3, color = infographics_colour, position = position_stack(vjust = 0.5)) +
-  xlim(0.8, 4.5) + 
+  geom_text(aes(x = 2.5, label = paste0(count, "%")), size = 3, color = background_colour, position = position_stack(vjust = 0.6)) +
+  geom_text(aes(x = 3.5, label = paste0(count, "%")), size = 2, color = "transparent", position = position_stack(vjust = 0.4)) +
+  geom_text(aes(x = 3.5, label = paste0(count, "%")), size = 2, color = "transparent", position = position_stack(vjust = 0.5)) +
+  geom_text(aes(x = 3.5, label = paste0(count, "%")), size = 2, color = "transparent", position = position_stack(vjust = 0.6)) +
+  geom_text_repel(aes( x = 4.4, label = source), size = 2.5, color = infographics_colour, position = position_stack(vjust = 0.5)) +
+  xlim(0.6, 4.5) + 
   theme_void() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  theme(axis.text = element_blank()) +
+  theme(axis.ticks.length = unit(0, "mm"))
 
 ################################
 ################################
@@ -565,12 +566,16 @@ print(insert_right_rectcircle, vp = vplayout(x = 40:85, y = 1:83))
 
 #top 
 grid::grid.text("Overall rate", just = "left", y = unit(0.79, "npc"), x = unit(0.1, "npc"), gp = gpar(col = infographics_colour, fontsize = 22, fontface = "bold"))
-if (rate_number <= 9) {
+if (nchar(rate_number) == 1) {
   grid::grid.text(rate_number, just = "left", y = unit(0.75, "npc"), x = unit(0.1, "npc"), gp = gpar(col = infographics_colour2, fontsize = 60, fontface = "bold"))
-} else if (rate_number <= 99) {
+} else if (nchar(rate_number) == 2) {
   grid::grid.text(rate_number, just = "left", y = unit(0.75, "npc"), x = unit(0.07, "npc"), gp = gpar(col = infographics_colour2, fontsize = 60, fontface = "bold"))
-} else {
+} else if (nchar(rate_number) == 3) {
   grid::grid.text(rate_number, just = "left", y = unit(0.75, "npc"), x = unit(0.06, "npc"), gp = gpar(col = infographics_colour2, fontsize = 48, fontface = "bold"))
+} else if (nchar(rate_number) == 4) {
+  grid::grid.text(rate_number, just = "left", y = unit(0.75, "npc"), x = unit(0.06, "npc"), gp = gpar(col = infographics_colour2, fontsize = 40, fontface = "bold"))
+} else {
+  grid::grid.text(rate_number, just = "left", y = unit(0.75, "npc"), x = unit(0.06, "npc"), gp = gpar(col = infographics_colour2, fontsize = 24, fontface = "bold"))
 }
 grid::grid.text("people out of every", just = "left", y = unit(0.75, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 12))
 grid::grid.text("100,000", just = "left", y = unit(0.7, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour2, fontsize = 38))
@@ -601,6 +606,7 @@ if (rate_number <= 49) {
 }
 
 print(insert_plot, vp = useful::vplayout(x = 25:46, y = 35:70))
+#print(insert_cover_strip, vp = vplayout(x = 45:46, y = 35:70)) not working yet
 
 #middle 
 grid::grid.text(paste("Risk greater among", rhigh_factor), just = "left", y = unit(0.55, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 28, fontface = "bold"))
@@ -673,7 +679,6 @@ grid::grid.text("out of every", just = "left", y = unit(0.43, "npc"), x = unit(0
 grid::grid.text("100,000", just = "left", y = unit(0.41, "npc"), x = unit(0.81, "npc"), gp = gpar(col = infographics_colour2, fontsize = 20))
 grid::grid.text(rhigh_age, just = "left", y = unit(0.39, "npc"), x = unit(0.81, "npc"), gp = gpar(col = infographics_colour2, fontsize = 8))
 
-
 if (info_type %in% c(2:6)) {
   
 #element
@@ -697,7 +702,6 @@ if (is.null(most_cases)) {
   grid::grid.text("Most cases are", just = "right", y = unit(0.31, "npc"), x = unit(0.92, "npc"), gp = gpar(col = infographics_colour, fontsize = 18))
   grid::grid.text(most_cases, just = "right", y = unit(0.28, "npc"), x = unit(0.92, "npc"), gp = gpar(col = infographics_colour, fontsize = 24, fontface = "bold"))
 }
-
 
 print(insert_house, vp = vplayout(x = 87:102, y = 47:62))
 grid::grid.text(paste0(community_percent, "%"), just = "left", y = unit(0.11, "npc"), x = unit(0.61, "npc"), gp = gpar(col = infographics_colour, fontsize = 28, fontface = "bold"))
@@ -727,7 +731,6 @@ grid::grid.text("annual-epidemiological-commentary", just = "left", y = unit(0.0
   grid::grid.text(paste0(community_percent_old, "%"), just = "left", y = unit(0.11, "npc"), x = unit(0.11, "npc"), gp = gpar(col = infographics_colour, fontsize = 28, fontface = "bold"))
   grid::grid.text("< 2 days", just = "left", y = unit(0.08, "npc"), x = unit(0.11, "npc"), gp = gpar(col = infographics_colour, fontsize = 14, fontface = "bold"))
   
-  
   print(insert_hospital, vp = vplayout(x = 87:102, y = 22:37))
   grid::grid.text(paste0(hospital_percent_old, "%"), just = "left", y = unit(0.11, "npc"), x = unit(0.31, "npc"), gp = gpar(col = infographics_colour2, fontsize = 28, fontface = "bold"))
   grid::grid.text(paste(expression("\U2265 4 days")), just = "left", y = unit(0.08, "npc"), x = unit(0.31, "npc"), gp = gpar(col = infographics_colour2, fontsize = 14, fontface = "bold"))
@@ -745,7 +748,6 @@ grid::grid.text("annual-epidemiological-commentary", just = "left", y = unit(0.0
   grid::grid.text(paste0(community_percent_new, "%"), just = "left", y = unit(0.11, "npc"), x = unit(0.55, "npc"), gp = gpar(col = infographics_colour, fontsize = 28, fontface = "bold"))
   grid::grid.text("< 4 days", just = "left", y = unit(0.08, "npc"), x = unit(0.55, "npc"), gp = gpar(col = infographics_colour, fontsize = 14, fontface = "bold"))
   
-  
   print(insert_hospital, vp = vplayout(x = 87:102, y = 57:72))
   grid::grid.text(paste0(hospital_percent_new, "%"), just = "left", y = unit(0.11, "npc"), x = unit(0.73, "npc"), gp = gpar(col = infographics_colour2, fontsize = 28, fontface = "bold"))
   grid::grid.text(paste(expression("\U2265 4 days")), just = "left", y = unit(0.08, "npc"), x = unit(0.73, "npc"), gp = gpar(col = infographics_colour2, fontsize = 14, fontface = "bold"))
@@ -755,15 +757,10 @@ grid::grid.text("annual-epidemiological-commentary", just = "left", y = unit(0.0
   
   grid::grid.text("For full report, please see", just = "left", y = unit(0.06, "npc"), x = unit(0.22, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
   grid::grid.text("https://www.gov.uk/government/statistics/mrsa-mssa-and-e-coli-bacteraemia-and-c-difficile-infection-annual-epidemiological-commentary", just = "left", y = unit(0.05, "npc"), x = unit(0.22, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
- # grid::grid.text("annual-epidemiological-commentary", just = "left", y = unit(0.03, "npc"), x = unit(0.52, "npc"), gp = gpar(col = infographics_colour, fontsize = 5))
-  
-  
-  
+
 }
 #CREATE PDF AND CLOSE DEVICE
 setwd(temp_wd)
 print(paste0(output_name, " was saved in ", path.expand(output_path)))
 grDevices::dev.off()
 }
-
-#create_infographics("Test.pdf", "C:/Users/Piotr.Patrzylas/Desktop/")
