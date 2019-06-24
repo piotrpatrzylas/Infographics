@@ -6,7 +6,7 @@
 ##############################
 
 # Title - enter number from the list below
-info_type <- 2
+info_type <- 3
 # 1 - C. difficile infection
 # 2 - E. coli bacteraemia
 # 3 - Klebsiella spp. bacteraemia
@@ -270,7 +270,6 @@ adult_man75 <- "adult_m75.png"
 adult_woman <- "adult_w.png"
 baby <- "baby.png"
 people <- "people.png"
-#cover_strip <- "cover strip.jpg" not in use yet
 
 ##############################
 #   FIXED ELEMENTS           #
@@ -605,8 +604,7 @@ if (rate_number <= 49) {
   print(insert_people, vp = useful::vplayout(x = 35:45, y = 6:16))
 }
 
-print(insert_plot, vp = useful::vplayout(x = 25:46, y = 35:70))
-#print(insert_cover_strip, vp = vplayout(x = 45:46, y = 35:70)) not working yet
+print(insert_plot, vp = useful::vplayout(x = 25:45, y = 35:70))
 
 #middle 
 grid::grid.text(paste("Risk greater among", rhigh_factor), just = "left", y = unit(0.55, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 28, fontface = "bold"))
