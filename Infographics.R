@@ -1,5 +1,5 @@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
-#@     INFOGRAPHICS v.02    @#
+#@     INFOGRAPHICS v0.5    @#
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
 ##############################
 #   INPUT INFORMATION        #
@@ -410,7 +410,6 @@ create_element(right_squarecircle, "insert_right_squarecircle")
 create_element(left_rectcircle, "insert_left_rectcircle")
 create_element(left_rectcircle_cdi, "insert_left_rectcircle_cdi")
 create_element(right_rectcircle, "insert_right_rectcircle")
-create_element(cover_strip, "insert_cover_strip")
 
 create_people(people, "insert_people")
 
@@ -452,7 +451,16 @@ top_plot <- ggplot(plot_data, aes(x = years, y = rate, group = 1)) +
   if (info_type == 6){labs(subtitle = tolower(title_name2))} 
 
 ggsave(filename = "top.png", plot = top_plot, device = "png", path = getwd(), width = 5, height = 3)
-create_element("top.png", "insert_plot")
+
+create_plot <- function (image_file, output) {
+  r_object <- image_read(image_file)
+  r_object <- image_fill(r_object, background_colour, point = "+2+899", fuzz = 10)
+  r_object <- ggplot(empty_plot) + draw_image(r_object)
+  assign(output, r_object, env = .GlobalEnv)
+}
+
+create_plot("top.png", "insert_plot")
+(insert_plot)
 
 #waffle plot
 if (waffle_decimals == 0) {
@@ -604,7 +612,7 @@ if (rate_number <= 49) {
   print(insert_people, vp = useful::vplayout(x = 35:45, y = 6:16))
 }
 
-print(insert_plot, vp = useful::vplayout(x = 25:45, y = 35:70))
+print(insert_plot, vp = useful::vplayout(x = 25:46, y = 35:70))
 
 #middle 
 grid::grid.text(paste("Risk greater among", rhigh_factor), just = "left", y = unit(0.55, "npc"), x = unit(0.2, "npc"), gp = gpar(col = infographics_colour, fontsize = 28, fontface = "bold"))
