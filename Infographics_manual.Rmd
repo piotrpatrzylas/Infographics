@@ -1,21 +1,21 @@
 ---
-title: "Infographics (v.02) "
-date: "17 June 2019"
+title: "Infographics (v1.00) "
+date: "01 July 2019"
 output: html_document
 organisation: Public Health England
 theme: readable
 ---
 # Description
-Script for printing icongraphics documents in PDF format. 
+Script for printing infographics documents in PDF format. 
 Most elements in the output file are pre-defined, leaving to user selecting appropriate options and providing data. 
-This script is intented to run in Windows OS.
+This script is intented to run in Windows OS with R setup as described below.
 
-# Initial Setup
+# Setup
 Assuming R and R studio are installed and updated to the newest versions:
 
 1. Download folder with all neccesary files from [here](https://github.com/piotrpatrzylas/Infographics)
 2. Go to that folder and open file "Infographics.R"
-3. Install mandatory packages with all dependencies:
+3. Install all mandatory packages with all dependencies:
   - useful
   - grid
   - magick
@@ -25,30 +25,127 @@ Assuming R and R studio are installed and updated to the newest versions:
   - RColorBrewer
   - Cairo
   - gridExtra
+  - ggrepel
 4. Setup input data 
-  - See below.
-5. Run the script - select all and run.
-  - Shortcut: Ctcl+A and Ctrl+Enter
+  - Change values for desired ones in the "Input Information" part.
+5. Loaf the script - select all and run.
+  - Tip: Ctrl+A and Ctrl+Enter do the job!
 6. Run "Create_infocraphics"" funtion.
-  - Optional argument is to choose output file name. For example to have output file "MRSA 2019" you should run this function as follows:  
-    + Create_infographics("MRSA 2019.pdf")
-  - You'll also be asked to select output directory.
+  - Optional arguments are file name and directory path.
 
-# Input data and examples
+# Examples
 
-After initial setup user should change/fill first part of the script.
-"Info_type" - expected value is numeric in range 1 to 6 for appropriate pdf document type (as described in the script).  
-"Rate_number" - expected value is integer.  
-"Plot_data" - expected value is data frame object with 2 columns: "years" and "rate".  
-"rhigh_factor"" - 
+There will be 3 examples below - all will be based on actual infographics documents from financial year 2017/18. These pdf's can be accessed [here](https://www.gov.uk/government/statistics/mrsa-mssa-and-e-coli-bacteraemia-and-c-difficile-infection-annual-epidemiological-commentary).
 
+## 1. Reproducing *C. difficile* 2017/18 infographic - [link1](https://app.box.com/s/q2229galxbotad2o05hig92wamnpe5ur)
+```{r, eval = FALSE}
+info_type <- 1 # This will change document to C.difficile theme. Description for options is shown below in the script.
+rate_number <- 24 # This is the number displayed in the top part - overall rate.
+plot_data   <- data.frame(years = c("2007/08", "2008/09", "2009/10", "2010/11", "2011/12", "2012/13", "2013/14", "2014/15", "2015/16", "2016/17", "2017/18"),
+                        rate = c(100, 80, 50, 40, 30, 20, 21, 20, 22, 19, 20)) #This is date to produce plot in top part.
+rhigh_factor  <- 7    # This sets age group for high risk factor.Description for options is shown below in the script.
+rlow_factor   <- 4    # This sets age group for low risk factor.Description for options is shown below in the script.
+rhigh_malenumber  <- 269  # This code male high factor number. (middle part)
+rhigh_femnumber   <- 250  # This code female high factor number.(middle part)
+rlow_malenumber   <- 13   # This code male low factor number.(middle part)
+rlow_femnumber    <- 16   # This code female low factor number.(middle part)
+doughnut_data   <- some data frame # This code is not used to produce C. difficile document. Can be omitted.
+community_percent <- 66   # This code is not used to produce C. difficile document. Can be omitted.
+hospital_percent <- 33    # This code is not used to produce C. difficile document. Can be omitted.
+previous_year <- "2007/08" # Change this to set year in the bottom part of document. (bottom left)
+community_percent_old <- 40 # Value for "most cases..." - previous_year community.
+hospital_percent_old <- 60 # Value for "most cases..." - previous_year hospital
+community_percent_new <- 64 # Value for "most cases..." - current year community.
+hospital_percent_new <- 36 # Value for "most cases..." - current year hospital
+year_manually <- "2017/18" # Change this to set title year.
 
+```
+After changing variables values to above and loading the code (Control+A -> Control+Enter) we can run the function choosing optional parameters:
+```{r, eval = FALSE}
+
+create_infographics("Cdi.pdf", "C:/Users/Name/Desktop/")
+```
+This will create "Cdi.pdf" in the Windows OS desktop (you should replace name with your user name). Of course you can change file name/output path to your preferences, keeping in mind R syntax. 
+
+```{r, echo = F, out.width = "25%", fig.pos="h", fig.align="center", fig.cap="CDI example"}
+knitr::include_graphics("C:/Users/Piotr.Patrzylas/Desktop/HCAI/Info/example1.jpg")
+```
+
+## 2. Reproducing *E.coli* 2017/2018 infographic - [link2](https://app.box.com/s/exuptcg3ois1dvl9czuh2koz2htlwh54)
+```{r, eval = FALSE}
+info_type <- 2 # This will change document to C.difficile theme. Description for options is shown below in the script.
+rate_number <- 74 # This is the number displayed in the top part - overall rate.
+plot_data   <- data.frame(years = c("2012/13", "2013/14", "2014/15", "2015/16", "2016/17", "2017/18"),
+                        rate = c(60, 64, 69, 73, 77, 80)) #This is data to produce plot in top part.
+rhigh_factor  <- 7    # This sets age group for high risk factor.Description for options is shown below in the script.
+rlow_factor   <- 4    # This sets age group for low risk factor.Description for options is shown below in the script.
+rhigh_malenumber  <- 901  # This code male high factor number. (middle part)
+rhigh_femnumber   <- 616  # This code female high factor number.(middle part)
+rlow_malenumber   <- 53   # This code male low factor number.(middle part)
+rlow_femnumber    <- 54   # This code female low factor number.(middle part)
+doughnut_data     <- data.frame(
+  count = c(15, 7, 6, 7, 16, 49),
+  source = c("Unknown", "Other", "Respiratory tract", "Gastrointestinal", "Hepatibiliary", "UTI")) # This is data to produce pie chart in the bottom part.  
+community_percent <- 81   # Value for "most cases..." - current year community.
+hospital_percent <- 19    # Value for "most cases..." - current year hospital
+previous_year <- "2007/08" # Only used for CDI. Can be omitted.
+community_percent_old <- 40 # Only used for CDI. Can be omitted.
+hospital_percent_old <- 60 # Only used for CDI. Can be omitted.
+community_percent_new <- 64 # Only used for CDI. Can be omitted.
+hospital_percent_new <- 36 # Only used for CDI. Can be omitted.
+year_manually <- "2017/18" # Change this to set title year.
+
+```
+Run the function - for example :
+```{r, eval = FALSE}
+
+create_infographics("E.coli.pdf")
+```
+Will produce "E.coli.pdf" in default function argument for folder path - [home folder](https://astrostatistics.psu.edu/su07/R/html/base/html/Rhome.html).
+```{r, echo = F, out.width = "25%", fig.pos="h", fig.align="center", fig.cap="E.coli example"}
+knitr::include_graphics("C:/Users/Piotr.Patrzylas/Desktop/HCAI/Info/example2.jpg")
+```
+
+## 3.Reproducing MRSA 2018/2018 infographick - [link3](https://app.box.com/s/83bp1ed4w1pb8h77tnt0g1f0dlrywyqw)
+```{r, eval = FALSE}
+info_type <- 4 # This will change document to C.difficile theme. Description for options is shown below in the script.
+rate_number <- 1.5 # This is the number displayed in the top part - overall rate.
+plot_data   <- data.frame(years = c("2007/08", "2008/09", "2009/10", "2010/11", "2011/12", "2012/13", "2013/14", "2014/15", "2015/16", "2016/17", "2017/18"),
+                        rate = c(8, 7, 6, 5, 4, 3, 2, 2, 2, 2, 2)) #This is data to produce plot in top part.
+rhigh_factor  <- 7    # This sets age group for high risk factor.Description for options is shown below in the script.
+rlow_factor   <- 4    # This sets age group for low risk factor.Description for options is shown below in the script.
+rhigh_malenumber  <- 25  # This code male high factor number. (middle part)
+rhigh_femnumber   <- 6  # This code female high factor number.(middle part)
+rlow_malenumber   <- 2   # This code male low factor number.(middle part)
+rlow_femnumber    <- 1   # This code female low factor number.(middle part)
+doughnut_data     <- data.frame(
+  count = c(5, 36, 12, 31, 15),
+  source = c("Unknown", "Other source", "Pneumonia", "Soft and skin tissue", "Catheters & liners")) # This is data to produce pie chart in the bottom part.  
+community_percent <- 68   # Value for "most cases..." - current year community.
+hospital_percent <- 32    # Value for "most cases..." - current year hospital
+previous_year <- "2007/08" # Only used for CDI. Can be omitted.
+community_percent_old <- 40 # Only used for CDI. Can be omitted.
+hospital_percent_old <- 60 # Only used for CDI. Can be omitted.
+community_percent_new <- 64 # Only used for CDI. Can be omitted.
+hospital_percent_new <- 36 # Only used for CDI. Can be omitted.
+year_manually <- "2017/18" # Change this to set title year.
+
+```
+Run function wihtout specyfing output name 
+```{r, eval = FALSE}
+
+create_infographics(output_path = "my path")
+```
+would produce pdf named "Infographics.pdf" in desired folder (insert path to a folder instead "my path") 
+```{r, echo = F, out.width = "25%", fig.pos="h", fig.align="center", fig.cap="MRSA example"}
+knitr::include_graphics("C:/Users/Piotr.Patrzylas/Desktop/HCAI/Info/example3.jpg")
+```
 
 # Troubleshooting Q&A
 The best option is always to read carefully error message. 
 
 1. I can't install some packages.
-  - There could be many reasons why this happen. The best option is to read error message. For example, if some packages are required to be loaded before installation this need to be solved first. R packages become obsolete relatively quickly and over time some of the packages could be unavailable.Solution for this could be looking for archived version of these packages.
+  - There could be many reasons why this happen. The best option is to read error message. For example, if some packages are required to be loaded before installation this need to be solved first. R packages become obsolete relatively quickly and over time some of the packages could be unavailable. Solution for this could be looking for archived version of these packages.
 
 
 2. Package was installed but error massage says it is still missing.

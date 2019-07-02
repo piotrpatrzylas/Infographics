@@ -1,12 +1,12 @@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
-#@     INFOGRAPHICS v0.5    @#
+#@     INFOGRAPHICS v1.00   @#
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
 ##############################
 #   INPUT INFORMATION        #
 ##############################
 
 # Title - enter number from the list below
-info_type <- 3
+info_type <- 4
 # 1 - C. difficile infection
 # 2 - E. coli bacteraemia
 # 3 - Klebsiella spp. bacteraemia
@@ -15,9 +15,9 @@ info_type <- 3
 # 6 - Pseudomonas Aeruginosa Bacteraemia
 
 # Overall rate (top)
-rate_number <- 18.1   #must be numeric
-plot_data   <- data.frame(years = c("2011/12", "2012/13", "2013/14", "2014/15", "2015/16", "2017/19", "2019/20", "2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26", "2026/27", "2027/28"),
-                        rate = c(15, 15.5, 15.7, 20, 33, 15, 15.5, 15.7, 20, 33, 15, 24, 24, 65, 31))
+rate_number <- 1.5   #must be numeric
+plot_data   <- data.frame(years = c("2007/08", "2008/09", "2009/10", "2010/11", "2011/12", "2012/13", "2013/14", "2014/15", "2015/16", "2016/17", "2017/18"),
+                          rate = c(8, 7, 6, 5, 4, 3, 2, 2, 2, 2, 2))
 
 # Risk greater among (middle) - enter pair of numbers from the list below
 rhigh_factor  <- 7    #Max risk age group 
@@ -30,31 +30,30 @@ rlow_factor   <- 4    #Min risk age grop
 # 6 - senior adults   (age 75 - 84)
 # 7 - elderly         (>= 85)
 
-rhigh_malenumber  <- 185  #must be numeric
-rhigh_femnumber   <- 88   #must be numeric
-rlow_malenumber   <- 29   #must be numeric
-rlow_femnumber    <- 13   #must be numeric
+rhigh_malenumber  <- 25  #must be numeric
+rhigh_femnumber   <- 6   #must be numeric
+rlow_malenumber   <- 2   #must be numeric
+rlow_femnumber    <- 1   #must be numeric
 
 #Most common source of infection (bottom left) - may require formatting with \n for new line
 doughnut_data     <- data.frame(
-  count = c(22, 23, 14, 6, 25, 10),
-  source = c("Unknown", "Other sources", "Respiratory tract", "Gastrointestinal", "Hepatibiliary", "UTI"))
+  count = c(5, 36, 12, 31, 15),
+  source = c("Unknown", "Other source", "Pneumonia", "Soft \n& \nskin tissue", "Catheters & liners"))
 
 #Most cases (bottom right)
-community_percent <- 66   #must be numeric
-hospital_percent <- 33    #must be numeric
+community_percent <- 68   #must be numeric
+hospital_percent <- 32   #must be numeric
 
 #CDI Only
 previous_year <- "2007/08"
 
 community_percent_old <- 40
 hospital_percent_old <- 60
-community_percent_new <- 60
-hospital_percent_new <- 40
+community_percent_new <- 64
+hospital_percent_new <- 36
 
-# Change manually location / year in the title:
-location_manually <- NULL
-year_manually <- NULL
+# Change manually year in the title:
+year_manually <- "2017/18"
 
 ##############################
 #       LIBRARIES            #
@@ -127,13 +126,11 @@ if (info_type == 1) {
 get_waffle_integers <- floor(rate_number)
 waffle_decimals <- rate_number - get_waffle_integers
 
-if (is.null(location_manually)) {
-  title_place <- "England"
-} else {title_place = location_manually}
+title_place <- "England"
 
 if (is.null(year_manually)) {
   title_year <- paste0(as.numeric(this_year)-1, "/", this_year)
-} else {title_year = paste0(as.numeric(year_manually) -1, "/", year_manually)}
+} else {title_year = str_remove(paste0(as.numeric(as.factor(year_manually)) -1, "/", year_manually), "0/")}
   
 #middle
 switch(rhigh_factor, 
@@ -460,7 +457,6 @@ create_plot <- function (image_file, output) {
 }
 
 create_plot("top.png", "insert_plot")
-(insert_plot)
 
 #waffle plot
 if (waffle_decimals == 0) {
@@ -501,12 +497,12 @@ doughnut_plot <-
   geom_text(aes(x = 3.5, label = paste0(count, "%")), size = 2, color = "transparent", position = position_stack(vjust = 0.4)) +
   geom_text(aes(x = 3.5, label = paste0(count, "%")), size = 2, color = "transparent", position = position_stack(vjust = 0.5)) +
   geom_text(aes(x = 3.5, label = paste0(count, "%")), size = 2, color = "transparent", position = position_stack(vjust = 0.6)) +
-  geom_text_repel(aes( x = 4.4, label = source), size = 2.5, color = infographics_colour, position = position_stack(vjust = 0.5)) +
+  geom_text_repel(aes( x = 4.4, label = source), size = 3, color = infographics_colour, direction = "y", position = position_stack(vjust = 0.5)) +
   xlim(0.6, 4.5) + 
   theme_void() +
   theme(legend.position = "none") +
   theme(axis.text = element_blank()) +
-  theme(axis.ticks.length = unit(0, "mm"))
+  theme(axis.ticks.length = unit(0, "mm")) 
 
 ################################
 ################################
